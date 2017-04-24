@@ -7,7 +7,8 @@ import java.util.Properties;
 import ccte.core.CCTETemplate;
 import ccte.core.CCTETemplateFactory;
 
-/**© 2015-2017 CCLooMi.Inc Copyright
+/**
+ * © 2015-2017 Chenxj Copyright
  * 类    名：TemplateTest
  * 类 描 述：
  * 作    者：Chenxj

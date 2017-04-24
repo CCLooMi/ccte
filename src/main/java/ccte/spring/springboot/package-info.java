@@ -1,4 +1,4 @@
-/**© 2015-2017 CCLooMi.Inc Copyright
+/**© 2015-2017 Chenxj Copyright
  * 类    名：package-info
  * 类 描 述：
  * 作    者：Chenxj

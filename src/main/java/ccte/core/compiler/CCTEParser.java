@@ -21,7 +21,7 @@ import ccte.core.CCTEConstant;
 import ccte.core.CCTEDocument;
 import ccte.core.CCTETemplate;
 
-/**© 2015-2017 CCLooMi.Inc Copyright
+/**© 2015-2017 Chenxj Copyright
  * 类    名：CCTEParser
  * 类 描 述：
  * 作    者：Chenxj
