@@ -163,6 +163,8 @@ public final class CCTETemplateFactory implements CCTEConstant{
 			java.insert(0, java_before).append("}}");
 			
 			fileHead.append(java);
+			//TODO
+//			System.out.println(fileHead);
 			char[]content=new char[fileHead.length()];
 			fileHead.getChars(0, fileHead.length(), content, 0);
 			compilationUnits[docId++]=new CompilationUnit(content, newClassName, charset.name(), "none", true);

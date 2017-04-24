@@ -30,4 +30,5 @@ public interface CCTEConstant {
 	/**匹配比较符号*/
 	public static final Pattern cppattern=Pattern.compile("[<>=!][<>=]?");
 	public static final Pattern cpmatcher=Pattern.compile("[^|&<>=()]+[<>=!][<>=]?[^|&<>=()]+");
+	public static final Pattern numeric=Pattern.compile("\\d+\\.?\\d+|-\\d+\\.?\\d+");
 }

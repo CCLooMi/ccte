@@ -192,8 +192,8 @@ public class CCTEParser implements CCTEConstant{
 					attrName=attrName.substring(3, attrName.length());
 					String bakAttrs=attrs.get(attrName);
 					attrs.remove(attrName);
-					if(bakAttrs==null){
-						bakAttrs="";
+					if("".equals(bakAttrs)){
+						bakAttrs=" ";
 					}
 					
 					String attrV=attr.getValue();
@@ -202,10 +202,10 @@ public class CCTEParser implements CCTEConstant{
 					if(matcher.matches()){
 						attrs.remove(attr.getKey());
 						//[{},()]
-						List<String>ls=split(attrV, ccpattern_left);
+						List<String>ls=split(attrV, ccpattern_left,2);
 						Map<String, String>kvmap=jsonString2map(ls.get(0));
 						if(!kvmap.isEmpty()){
-							sb.append(attrName).append("=\"").append(bakAttrs).append(' ');
+							sb.append(bakAttrs).append(attrName).append("=\"");
 							//是否使带<=>
 							if(eqpattern.matcher(ls.get(1)).matches()){
 								sb.append(seprator).append(codeflag)
@@ -329,7 +329,7 @@ public class CCTEParser implements CCTEConstant{
 				if(ls.get(2).startsWith("\'")){
 					result.append(".equals(").append(ls.get(2).replace('\'', '"')).append(')');
 				}else{
-					if(ls.get(2).contains(".")){
+					if(ls.get(2).contains(".")&&!isNumeric(ls.get(2))){
 						result.append(".equals(").append(ls.get(2).replaceAll("\\.", ".getAttr(\"")).append("\"))");
 					}else{
 						result.append(".equals(").append(ls.get(2)).append(')');
@@ -337,26 +337,40 @@ public class CCTEParser implements CCTEConstant{
 				}
 			}else if(ls.get(2).startsWith("'")){
 				result.append(ls.get(2).replace('\'', '"'));
-				if(ls.get(0).contains(".")){
+				if(ls.get(0).contains(".")&&!isNumeric(ls.get(0))){
 					result.append(".equals(").append(ls.get(0).replaceAll("\\.", ".getAttr(\"")).append("\"))");
 				}else{
 					result.append(".equals(").append(ls.get(0)).append(')');
 				}
 			}else{
-				if(ls.get(0).contains(".")){
+				if(ls.get(0).contains(".")&&!isNumeric(ls.get(0))){
+					if(isNumeric(ls.get(2))){
+						if(ls.get(2).contains(".")){
+							result.append('(').append("double").append(')');
+						}else{
+							result.append('(').append("long").append(')');
+						}
+					}
 					result.append(ls.get(0).replaceAll("\\.", ".getAttr(\"")).append("\")");
 				}else{
 					result.append(ls.get(0));
 				}
 				result.append(ls.get(1));
-				if(ls.get(2).contains(".")){
+				if(ls.get(2).contains(".")&&!isNumeric(ls.get(2))){
+					if(isNumeric(ls.get(0))){
+						if(ls.get(0).contains(".")){
+							result.append('(').append("double").append(')');
+						}else{
+							result.append('(').append("long").append(')');
+						}
+					}
 					result.append(ls.get(2).replaceAll("\\.", ".getAttr(\"")).append("\")");
 				}else{
 					result.append(ls.get(2));
 				}
 			}
 		}else{
-			if(s.contains(".")){
+			if(s.contains(".")&&!isNumeric(s)){
 				result.append(s.replaceAll("\\.", ".getAttr(\"")).append("\")");
 			}else{
 				result.append(s);
