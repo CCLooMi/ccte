@@ -182,7 +182,8 @@ public class CCTEParser implements CCTEConstant{
 	}
 	private void process_attrs(Node node,Attributes attrs,StringBuilder sb){
 		if(attrs.size()>0){
-			sb.append('<').append(node.nodeName()).append(' ');
+//			sb.append('<').append(node.nodeName()).append(' ');
+			sb.append('<').append(node.nodeName());
 			
 			Attributes attrsClone=attrs.clone();
 			attrsClone.forEach((attr)->{

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CCTECompiler {
 	public static final CCTEClassLoad classLoad=new CCTEClassLoad();
-	
+	private static final String charset="UTF-8";
 	private static final Logger log=LoggerFactory.getLogger(CCTECompiler.class);
 	private static final INameEnvironment ne=new CCTENameEnvironment();
 	private static final IErrorHandlingPolicy ehp=DefaultErrorHandlingPolicies.proceedWithAllProblems();
@@ -98,10 +98,10 @@ public class CCTECompiler {
 	public static <T>void compile(StringBuilder source,String className,CCTECompilerResult<T> compilerResult){
 		char[]content=new char[source.length()];
 		source.getChars(0, source.length(), content, 0);
-		compile(new ICompilationUnit[]{new CompilationUnit(content, className, "UTF-8", "none", true)},compilerResult);
+		compile(new ICompilationUnit[]{new CompilationUnit(content, className, charset, "none", true)},compilerResult);
 	}
 	public static <T>void compile(String source,String className,CCTECompilerResult<T> compilerResult){
-		compile(new ICompilationUnit[]{new CompilationUnit(source.toCharArray(), className, "UTF-8", "none", true)},compilerResult);
+		compile(new ICompilationUnit[]{new CompilationUnit(source.toCharArray(), className, charset, "none", true)},compilerResult);
 	}
 	public static class CCTEClassLoad extends ClassLoader{
 		@SuppressWarnings("unchecked")

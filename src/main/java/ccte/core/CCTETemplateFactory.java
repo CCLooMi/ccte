@@ -182,6 +182,7 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	public CCTETemplate findTemplate(String url){
 		return templatesMap.get(url);
 	}
+	/**测试用*/
 	public CCTETemplate getTemplate(String url){
 		if(!templatesMap.containsKey(url)){
 			InputStream in=getClass().getClassLoader().getResourceAsStream(url);
