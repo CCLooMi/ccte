@@ -1,5 +1,8 @@
 package ccte.core;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**@类名 CCTEConstant
@@ -30,5 +33,9 @@ public interface CCTEConstant {
 	/**匹配比较符号*/
 	public static final Pattern cppattern=Pattern.compile("[<>=!][<>=]?");
 	public static final Pattern cpmatcher=Pattern.compile("[^|&<>=()]+[<>=!][<>=]?[^|&<>=()]+");
+	/**匹配数字*/
 	public static final Pattern numeric=Pattern.compile("\\d+\\.?\\d+|-\\d+\\.?\\d+");
+	public static final Set<String>voidTags=new HashSet<>(Arrays
+			.asList("br","hr","img","input","link","meta",
+			"area","base","col","command","embed","keygen","param","source","track","wbr"));
 }

@@ -110,8 +110,10 @@ public class CCTEParser implements CCTEConstant{
 				sb.append("</").append(node.nodeName()).append('>');
 			}else{
 				process_attrs(node, attrs, sb);
-				nodes2string(node.childNodes(),sb);
-				sb.append("</").append(node.nodeName()).append('>');
+				if(!voidTags.contains(node.nodeName())){
+					nodes2string(node.childNodes(),sb);
+					sb.append("</").append(node.nodeName()).append('>');
+				}
 			}
 		}else{
 			String html=node.outerHtml();
