@@ -1,15 +1,36 @@
-group 'ccte'
+group 'ccloomi.com'
 version '1.0'
+def artifactId='ccte'
+
 apply plugin: 'java'
+apply plugin: 'maven'
 allprojects {
 	repositories {
 		maven{url='http://192.168.31.109:8081/repository/alimaven-central/'}
 		maven{url "http://192.168.31.109:8081/repository/spring-snapshot/"}
 	}
 }
-//repositories {
-//    mavenCentral()
-//}
+//打包源代码
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives sourcesJar
+}
+//上传到nexus
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://192.168.31.109:8081/repository/maven-releases/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "$project.group"
+        }
+    }
+}
 dependencies {
         def springVersion		= "4.3.6.RELEASE"
         def jacksonVersion		= "2.8.6"
