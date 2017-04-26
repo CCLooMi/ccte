@@ -73,6 +73,37 @@ public abstract class MapBean {
 		}
 		
 	}
+	public static MapBean createMapBean(Object o){
+		MapBean mb;
+		String newClassName=o.getClass().getSimpleName()+'_'+Integer.toHexString(o.getClass().getName().hashCode());
+		try{
+			Class<?>clazz=CCTECompiler.classLoad.loadClass(newClassName);
+			mb = (MapBean)clazz.newInstance();
+		}catch (Exception e) {
+			StringBuilder sb=new StringBuilder();
+			sb.append("public class ")
+			.append(newClassName)
+			.append(" extends ").append(MapBean.class.getName())
+			.append('{');
+			parserFields(o, sb);
+			sb.append("public ").append(MapBean.class.getName()).append(" clone(){")
+			.append("return new ").append(newClassName)
+			.append("();}}");
+			CCTESingleCompilerResult<MapBean>result=new CCTESingleCompilerResult<>();
+			CCTECompiler.compile(sb, newClassName,result);
+			mb = result.getInstance();
+		}
+		Field[]fs=o.getClass().getDeclaredFields();
+		try{
+			for(int i=0;i<fs.length;i++){
+				if(!"serialVersionUID".equals(fs[i].getName())&&!"this$0".equals(fs[i].getName())){
+					fs[i].setAccessible(true);
+					mb.setAttr(fs[i].getName(), fs[i].get(o));
+				}
+			}
+		}catch (Exception e) {}
+		return mb;
+	}
 	private static void parserFields(Object obj,StringBuilder sb){
 		int type=-1;
 		Field[]fields=null;
