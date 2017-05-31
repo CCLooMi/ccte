@@ -1,5 +1,5 @@
 group 'ccloomi.com'
-version '1.0'
+version '1.0.1'
 def artifactId='ccte'
 
 apply plugin: 'java'
@@ -7,7 +7,8 @@ apply plugin: 'maven'
 allprojects {
 	repositories {
 		maven{url='http://192.168.31.109:8081/repository/alimaven-central/'}
-		maven{url "http://192.168.31.109:8081/repository/spring-snapshot/"}
+		maven{url="http://192.168.31.109:8081/repository/spring-snapshot/"}
+		maven{url="https://repo.spring.io/libs-snapshot"}
 	}
 }
 //打包源代码

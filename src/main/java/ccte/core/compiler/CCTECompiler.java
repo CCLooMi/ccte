@@ -2,6 +2,7 @@ package ccte.core.compiler;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -104,9 +105,24 @@ public class CCTECompiler {
 		compile(new ICompilationUnit[]{new CompilationUnit(source.toCharArray(), className, charset, "none", true)},compilerResult);
 	}
 	public static class CCTEClassLoad extends ClassLoader{
+		private Method defineClass;
+		public CCTEClassLoad() {
+			try {
+				defineClass=ClassLoader.class.getDeclaredMethod("defineClass", String.class,byte[].class,int.class,int.class);
+				defineClass.setAccessible(true);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		@SuppressWarnings("unchecked")
 		public <T>Class<T> loadClass(byte[]b,String className){
-			return (Class<T>) super.defineClass(className, b, 0, b.length);
+			try {
+				//打包之后此自定义类加载器加载的类（实时编译生成的模版类）和其依赖的类不是同一个类加载器加载的
+				//导致Java.lang.NoClassDefFoundError异常，故使用反射调用当前类加载器的defineClass来加载模版类
+				return (Class<T>) defineClass.invoke(this.getClass().getClassLoader(), className, b, 0, b.length);
+			}catch (Exception e) {
+				return (Class<T>) defineClass(className, b, 0, b.length);
+			}
 		}
 	}
 	private static Map<String,String> getSettings() {

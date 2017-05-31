@@ -43,7 +43,6 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	private Map<String, Document>docMap;
 	private Map<String, Set<String>>docImports;
 	private Map<String, Set<String>>docSets;
-	
 	public CCTETemplateFactory(){
 		resourcePatternResolver=new PathMatchingResourcePatternResolver();
 		cctedocMap=new HashMap<>();
@@ -51,7 +50,6 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		docImports=new HashMap<>();
 		docSets=new HashMap<>();
 	}
-	
 	private CCTETemplateFactory scanTemplates(){
 		int pathsl=templateLoadPath.length;
 		try{

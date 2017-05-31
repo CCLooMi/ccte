@@ -103,11 +103,21 @@ public class CCTENameEnvironment implements INameEnvironment{
 			}
 		}
 	}
-	private static byte[] readClass(String className, boolean close)throws IOException {
-		InputStream is=ClassLoader.getSystemResourceAsStream(className.replace('.', '/')+ ".class");
-        if (is == null) {
-            throw new IOException("Class not found");
-        }
+	private byte[] readClass(String className, boolean close)throws IOException {
+		InputStream is=null;
+		if(!isPackage(className)){
+			String clazz=className.replace('.', '/')+ ".class";
+			is=ClassLoader.getSystemResourceAsStream(clazz);
+			if(is==null){
+				is=getClass().getClassLoader()
+						.getResourceAsStream(clazz);
+			}
+	        if (is == null) {
+	            throw new IOException("Class file read error.");
+	        }
+		}else{
+			throw new IOException("Class not found");
+		}
         try {
             byte[] b = new byte[is.available()];
             int len = 0;
