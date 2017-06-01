@@ -194,9 +194,6 @@ public class CCTEParser implements CCTEConstant{
 					attrName=attrName.substring(3, attrName.length());
 					String bakAttrs=attrs.get(attrName);
 					attrs.remove(attrName);
-					if("".equals(bakAttrs)){
-						bakAttrs=" ";
-					}
 					
 					String attrV=attr.getValue();
 					Matcher matcher=ccpattern.matcher(attrV);
@@ -207,7 +204,10 @@ public class CCTEParser implements CCTEConstant{
 						List<String>ls=split(attrV, ccpattern_left,2);
 						Map<String, String>kvmap=jsonString2map(ls.get(0));
 						if(!kvmap.isEmpty()){
-							sb.append(bakAttrs).append(attrName).append("=\"");
+							sb.append(" ").append(attrName).append("=\"");
+							if(!"".equals(bakAttrs)){
+								sb.append(bakAttrs).append(" ");
+							}
 							//是否使带<=>
 							if(eqpattern.matcher(ls.get(1)).matches()){
 								sb.append(seprator).append(codeflag)
@@ -216,7 +216,7 @@ public class CCTEParser implements CCTEConstant{
 									String value=kvmap.get("true");
 									//value为字符串直接输出值
 									if(value.startsWith("'")){
-										sb.append(value.substring(1, value.length()-1)).append("\" ");
+										sb.append(value.substring(1, value.length()-1)).append('"');
 									}else{
 										sb.append(seprator).append(codeflag);
 										if(value.contains(".")){
@@ -225,7 +225,7 @@ public class CCTEParser implements CCTEConstant{
 											sb.append("outprint(out,").append(value).append(");");
 										}
 										sb.append(seprator)
-										.append("\" ");
+										.append('"');
 									}
 								}
 								if(kvmap.containsKey("false")){
@@ -234,7 +234,7 @@ public class CCTEParser implements CCTEConstant{
 									String value=kvmap.get("false");
 									//value为字符串直接输出值
 									if(value.startsWith("'")){
-										sb.append(value.substring(1, value.length()-1)).append("\" ");
+										sb.append(value.substring(1, value.length()-1)).append('"');
 									}else{
 										sb.append(seprator).append(codeflag);
 										if(value.contains(".")){
@@ -243,7 +243,7 @@ public class CCTEParser implements CCTEConstant{
 											sb.append("outprint(out,").append(value).append(");");
 										}
 										sb.append(seprator)
-										.append("\" ");
+										.append('"');
 									}
 								}
 							}else{
@@ -269,7 +269,7 @@ public class CCTEParser implements CCTEConstant{
 									sb.append('{').append(seprator);
 									//value为字符串直接输出值
 									if(value.startsWith("'")){
-										sb.append(value.substring(1, value.length()-1)).append("\" ");
+										sb.append(value.substring(1, value.length()-1)).append('"');
 									}else{
 										sb.append(seprator).append(codeflag);
 										if(value.contains(".")){
@@ -278,7 +278,7 @@ public class CCTEParser implements CCTEConstant{
 											sb.append("outprint(out,").append(value).append(");");
 										}
 										sb.append(seprator)
-										.append("\" ");
+										.append('"');
 									}
 								}
 							}
