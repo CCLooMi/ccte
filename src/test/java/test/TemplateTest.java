@@ -21,7 +21,7 @@ public class TemplateTest {
 		fac.applyProperties(new Properties());
 		CCTETemplate template=fac.getTemplate("templates/test.html");
 		Map<String, Object>model=new HashMap<>();
-		model.put("name", "CCTE");
+		model.put("name", "Seemie的博客-Seemie的个人博客-CCLooMi");
 		model.put("names", new String[]{"Seemie","Tommy","Google","Apple"});
 		template.render(model, System.out);
 	}

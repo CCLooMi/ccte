@@ -219,4 +219,9 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		.pretreatment()
 		.compile();
 	}
+	/**获取 charset
+	 * 可用于response设置返回编码*/
+	public Charset getCharset() {
+		return charset;
+	}
 }

@@ -1,8 +1,10 @@
 package ccte.core.compiler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -105,24 +107,42 @@ public class CCTECompiler {
 		compile(new ICompilationUnit[]{new CompilationUnit(source.toCharArray(), className, charset, "none", true)},compilerResult);
 	}
 	public static class CCTEClassLoad extends ClassLoader{
-		private Method defineClass;
+//		private Method defineClass;
+		private String path;
 		public CCTEClassLoad() {
-			try {
-				defineClass=ClassLoader.class.getDeclaredMethod("defineClass", String.class,byte[].class,int.class,int.class);
-				defineClass.setAccessible(true);
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
+//			try {
+//				defineClass=ClassLoader.class.getDeclaredMethod("defineClass", String.class,byte[].class,int.class,int.class);
+//				defineClass.setAccessible(true);
+//			}catch (Exception e) {
+//				e.printStackTrace();
+//			}
+			path=getClass().getClassLoader().getResource("").getPath();
 		}
+		//由于tomcat类加载器问题，不得不先写入文件然后使用反射加载class。
+		//使用springboot的话自定义类加载器没问题。
 		@SuppressWarnings("unchecked")
 		public <T>Class<T> loadClass(byte[]b,String className){
+			File f=new File(path+className+".class");
+			FileOutputStream fout=null;
 			try {
-				//打包之后此自定义类加载器加载的类（实时编译生成的模版类）和其依赖的类不是同一个类加载器加载的
-				//导致Java.lang.NoClassDefFoundError异常，故使用反射调用当前类加载器的defineClass来加载模版类
-				return (Class<T>) defineClass.invoke(this.getClass().getClassLoader(), className, b, 0, b.length);
-			}catch (Exception e) {
-				return (Class<T>) defineClass(className, b, 0, b.length);
+				fout=new FileOutputStream(f);
+				fout.write(b);
+				return (Class<T>) Class.forName(className);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {fout.close();}
+				catch (IOException e) {}
 			}
+			return null;
+//			try {
+//				//打包之后此自定义类加载器加载的类（实时编译生成的模版类）和其依赖的类不是同一个类加载器加载的
+//				//导致Java.lang.NoClassDefFoundError异常，故使用反射调用当前类加载器的defineClass来加载模版类
+//				return (Class<T>) defineClass.invoke(getClass().getClassLoader(), className, b, 0, b.length);
+//			}catch (Exception e) {
+//				return (Class<T>) defineClass(className, b, 0, b.length);
+//			}
+//			return (Class<T>) defineClass(className, b, 0, b.length);
 		}
 	}
 	private static Map<String,String> getSettings() {
