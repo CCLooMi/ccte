@@ -5,8 +5,10 @@
 <title>Hello ${name}.</title>
 </head>
 <body>
+	<set>Map copyright</set>
 	<header for="String _n:names">
 		<h${$index+1} class="${_n}" cc_class="{true:'max',false:'min'}(1>2)" id="${$index+1}">${_n}</h${$index+1}>
 	</header>
+	<footer>${copyright.desc}</footer>
 </body>
 </html>

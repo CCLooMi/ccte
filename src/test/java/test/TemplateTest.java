@@ -23,6 +23,9 @@ public class TemplateTest {
 		Map<String, Object>model=new HashMap<>();
 		model.put("name", "Seemie的博客-Seemie的个人博客-CCLooMi");
 		model.put("names", new String[]{"Seemie","Tommy","Google","Apple"});
+		Map<String, Object>copyright=new HashMap<>();
+		copyright.put("desc", "CCLooMi All right resoved.2009-2017");
+		model.put("copyright", copyright);
 		template.render(model, System.out);
 	}
 }

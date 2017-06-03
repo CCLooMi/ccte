@@ -19,8 +19,8 @@ import ccte.core.compiler.CCTESingleCompilerResult;
  */
 public abstract class MapBean {
 	public MapBean clone(){return null;};
-	public Object getAttr(String name){return null;}
-	public void setAttr(String name,Object value){}
+	public Object get(String name){return null;}
+	public void put(String name,Object value){}
 	/**
 	 * @名称 createMapBeanByMap
 	 * @说明	创建MapBean
@@ -46,7 +46,7 @@ public abstract class MapBean {
 			CCTECompiler.compile(sb, className,result);
 			MapBean mb=result.getInstance();
 			for(Entry<String,? extends Object>entry:map.entrySet()){
-				mb.setAttr(entry.getKey(), entry.getValue());
+				mb.put(entry.getKey(), entry.getValue());
 			}
 			return mb;
 		}
@@ -98,7 +98,7 @@ public abstract class MapBean {
 			for(int i=0;i<fs.length;i++){
 				if(!"serialVersionUID".equals(fs[i].getName())&&!"this$0".equals(fs[i].getName())){
 					fs[i].setAccessible(true);
-					mb.setAttr(fs[i].getName(), fs[i].get(o));
+					mb.put(fs[i].getName(), fs[i].get(o));
 				}
 			}
 		}catch (Exception e) {}
@@ -134,8 +134,8 @@ public abstract class MapBean {
 						lkeysMap.put(fnl, ls);
 					}
 				}
-				//生成setAttr方法
-				sb.append("public void setAttr(String attrName,Object attrValue){switch(attrName.length()){");
+				//生成put方法
+				sb.append("public void put(String attrName,Object attrValue){switch(attrName.length()){");
 				for(Entry<Integer, List<String>> entry:lkeysMap.entrySet()){
 					sb.append("case ").append(entry.getKey()).append(":");
 					List<String>ls=entry.getValue();
@@ -163,8 +163,8 @@ public abstract class MapBean {
 				}
 				sb.append("default:}}");
 				
-				//生成getAttr方法
-				sb.append("public Object getAttr(String attrName){switch(attrName.length()){");
+				//生成get方法
+				sb.append("public Object get(String attrName){switch(attrName.length()){");
 				for(Entry<Integer, List<String>> entry:lkeysMap.entrySet()){
 					sb.append("case ").append(entry.getKey()).append(":");
 					List<String>ls=entry.getValue();
@@ -212,8 +212,8 @@ public abstract class MapBean {
 					}
 				}
 			}
-			//生成setAttr方法
-			sb.append("public void setAttr(String attrName,Object attrValue){switch(attrName.length()){");
+			//生成put方法
+			sb.append("public void put(String attrName,Object attrValue){switch(attrName.length()){");
 			for(Entry<Integer, List<Field>> entry:lfieldsMap.entrySet()){
 				sb.append("case ").append(entry.getKey()).append(":");
 				List<Field>ls=entry.getValue();
@@ -238,8 +238,8 @@ public abstract class MapBean {
 			}
 			sb.append("default:}}");
 			
-			//生成getAttr方法
-			sb.append("public Object getAttr(String attrName){switch(attrName.length()){");
+			//生成get方法
+			sb.append("public Object get(String attrName){switch(attrName.length()){");
 			for(Entry<Integer, List<Field>> entry:lfieldsMap.entrySet()){
 				sb.append("case ").append(entry.getKey()).append(":");
 				List<Field>ls=entry.getValue();
@@ -261,8 +261,8 @@ public abstract class MapBean {
 			}
 			sb.append("default:return null;}}");
 		}else if(type==0){
-			sb.append("public Object getAttr(String attr){return null;}")
-			.append("public void setAttr(String attr,Object value){}");
+			sb.append("public Object get(String attr){return null;}")
+			.append("public void put(String attr,Object value){}");
 		}
 	}
 	public static void main(String[] args) {
@@ -272,9 +272,9 @@ public abstract class MapBean {
 		om.put("size", 1234l);
 		om.put("emails", null);
 		MapBean mb=createMapBeanByMap(om);
-		System.out.println(mb.getAttr("age"));
-		System.out.println(mb.getAttr("name"));
-		System.out.println(mb.getAttr("size"));
-		System.out.println(mb.getAttr("emails"));
+		System.out.println(mb.get("age"));
+		System.out.println(mb.get("name"));
+		System.out.println(mb.get("size"));
+		System.out.println(mb.get("emails"));
 	}
 }

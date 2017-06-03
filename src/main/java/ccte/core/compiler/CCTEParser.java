@@ -133,7 +133,7 @@ public class CCTEParser implements CCTEConstant{
 		sb.append(seprator).append(codeflag)
 		.append("Object _").append(_list).append('=');
 		if(ss[1].contains(".")){
-			sb.append(ss[1].replaceAll("\\.", ".getAttr(\"")).append("\");");
+			sb.append(ss[1].replaceAll("\\.", ".get(\"")).append("\");");
 		}else{
 			sb.append("model.get(\"").append(ss[1].trim()).append("\");");
 		}
@@ -332,7 +332,7 @@ public class CCTEParser implements CCTEConstant{
 					result.append(".equals(").append(ls.get(2).replace('\'', '"')).append(')');
 				}else{
 					if(ls.get(2).contains(".")&&!isNumeric(ls.get(2))){
-						result.append(".equals(").append(ls.get(2).replaceAll("\\.", ".getAttr(\"")).append("\"))");
+						result.append(".equals(").append(ls.get(2).replaceAll("\\.", ".get(\"")).append("\"))");
 					}else{
 						result.append(".equals(").append(ls.get(2)).append(')');
 					}
@@ -340,7 +340,7 @@ public class CCTEParser implements CCTEConstant{
 			}else if(ls.get(2).startsWith("'")){
 				result.append(ls.get(2).replace('\'', '"'));
 				if(ls.get(0).contains(".")&&!isNumeric(ls.get(0))){
-					result.append(".equals(").append(ls.get(0).replaceAll("\\.", ".getAttr(\"")).append("\"))");
+					result.append(".equals(").append(ls.get(0).replaceAll("\\.", ".get(\"")).append("\"))");
 				}else{
 					result.append(".equals(").append(ls.get(0)).append(')');
 				}
@@ -353,7 +353,7 @@ public class CCTEParser implements CCTEConstant{
 							result.append('(').append("long").append(')');
 						}
 					}
-					result.append(ls.get(0).replaceAll("\\.", ".getAttr(\"")).append("\")");
+					result.append(ls.get(0).replaceAll("\\.", ".get(\"")).append("\")");
 				}else{
 					result.append(ls.get(0));
 				}
@@ -366,14 +366,14 @@ public class CCTEParser implements CCTEConstant{
 							result.append('(').append("long").append(')');
 						}
 					}
-					result.append(ls.get(2).replaceAll("\\.", ".getAttr(\"")).append("\")");
+					result.append(ls.get(2).replaceAll("\\.", ".get(\"")).append("\")");
 				}else{
 					result.append(ls.get(2));
 				}
 			}
 		}else{
 			if(s.contains(".")&&!isNumeric(s)){
-				result.append(s.replaceAll("\\.", ".getAttr(\"")).append("\")");
+				result.append(s.replaceAll("\\.", ".get(\"")).append("\")");
 			}else{
 				result.append(s);
 			}
@@ -406,7 +406,7 @@ public class CCTEParser implements CCTEConstant{
 		System.out.println(s);
 	}
 	private String toGetAttr(String s){
-		return s.replaceAll("\\.", ".getAttr(\"")+"\")";
+		return s.replaceAll("\\.", ".get(\"")+"\")";
 	}
 	private void addField(Set<String>fieldNames,StringBuilder fileHead,int k){
 		String fieldName="_"+Integer.toHexString(k);
