@@ -327,6 +327,9 @@ public class CCTEParser implements CCTEConstant{
 		if(eqpattern.matcher(s).matches()){
 			List<String>ls=split(s, cppattern);
 			if(ls.get(0).startsWith("'")){
+				if(ls.get(1).contains("!")){
+					result.append('!');
+				}
 				result.append(ls.get(0).replace('\'', '"'));
 				if(ls.get(2).startsWith("\'")){
 					result.append(".equals(").append(ls.get(2).replace('\'', '"')).append(')');
@@ -338,6 +341,9 @@ public class CCTEParser implements CCTEConstant{
 					}
 				}
 			}else if(ls.get(2).startsWith("'")){
+				if(ls.get(1).contains("!")){
+					result.append('!');
+				}
 				result.append(ls.get(2).replace('\'', '"'));
 				if(ls.get(0).contains(".")&&!isNumeric(ls.get(0))){
 					result.append(".equals(").append(ls.get(0).replaceAll("\\.", ".get(\"")).append("\"))");
