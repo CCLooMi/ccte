@@ -24,7 +24,7 @@ public class TemplateTest {
 		model.put("name", "Seemie的博客-Seemie的个人博客-CCLooMi");
 		model.put("names", new String[]{"Seemie","Tommy","Google","Apple"});
 		Map<String, Object>copyright=new HashMap<>();
-		copyright.put("desc", "CCLooMi All right resoved.2009-2017");
+		copyright.put("desc", " background-color:rgba(255,255,255,0.4); //透明度调整范围（0~1) //背景色颜色值必需是RGB值 a //表示透明度alpha  href表示http+reference display:flex align-");
 		model.put("copyright", copyright);
 		template.render(model, System.out);
 	}
