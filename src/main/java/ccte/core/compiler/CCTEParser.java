@@ -108,6 +108,15 @@ public class CCTEParser implements CCTEConstant{
 				process_for(_for,sb,forInner.toString());
 				
 				sb.append("</").append(node.nodeName()).append('>');
+			}else if(attrs.hasKey(_repeat_)){
+				String _repeat=attrs.get(_repeat_);
+				attrs.remove(_repeat_);
+				//生成for循环内部代码
+				StringBuilder forInner=new StringBuilder();
+				forInner.append(seprator);
+				node2string(node,forInner);
+				//处理for循环逻辑
+				process_for(_repeat,sb,forInner.toString());
 			}else{
 				process_attrs(node, attrs, sb);
 				if(!voidTags.contains(node.nodeName())){

@@ -16,6 +16,7 @@ public interface CCTEConstant {
 	public static final String _else_if_="else_if";
 	public static final String _else_="else";
 	public static final String _for_="for";
+	public static final String _repeat_="repeat";
 	/**代码隔离用，用来将纯html代码和java代码分离,java代码前面和后面一定有一个seprator*/
 	public static final char seprator=0;
 	/**java代码标识,避免和html中的javascript代码混淆*/
