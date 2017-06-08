@@ -1,12 +1,14 @@
 package ccte.core;
 
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import ccte.core.compiler.CCTECompiler;
 import ccte.core.compiler.CCTESingleCompilerResult;
@@ -122,7 +124,9 @@ public abstract class MapBean {
 				Map<Integer, List<String>>lkeysMap=new HashMap<>();
 				for(Entry<String, Object>entry:m.entrySet()){
 					Object v=entry.getValue();
-					sb.append("private ").append(v==null?"Object":v.getClass().getSimpleName()).append(" _")
+					sb.append("private ")
+					.append(v==null?"Object":classTypeName(v.getClass()))
+					.append(" _")
 					.append(Integer.toHexString(entry.getKey().hashCode())).append(';');
 					
 					Integer fnl=new Integer(entry.getKey().length());
@@ -151,13 +155,15 @@ public abstract class MapBean {
 							sb.append("this._").append(Integer.toHexString(fieldName.hashCode()));
 
 							Object v=m.get(fieldName);
-							sb.append("=(").append(v==null?"Object":v.getClass().getSimpleName()).append(")attrValue;");
+							sb.append("=(").append(v==null?"Object":classTypeName(v.getClass()))
+							.append(")attrValue;");
 						}
 						sb.append("}break;");
 					}else{
 						sb.append("this._").append(Integer.toHexString(ls.get(0).hashCode()));
 						Object v=m.get(ls.get(0));
-						sb.append("=(").append(v==null?"Object":v.getClass().getSimpleName()).append(")attrValue;");
+						sb.append("=(").append(v==null?"Object":classTypeName(v.getClass()))
+						.append(")attrValue;");
 						sb.append("break;");
 					}
 				}
@@ -201,7 +207,7 @@ public abstract class MapBean {
 				String fieldName=fields[i].getName();
 				//this$0 内部类特有属性
 				if(!"serialVersionUID".equals(fieldName)&&!"this$0".equals(fieldName)){
-					sb.append("private ").append(fields[i].getType().getName()).append(' ').append(fields[i].getName()).append(';');
+					sb.append("private ").append(classTypeName(fields[i].getType())).append(' ').append(fields[i].getName()).append(';');
 					Integer fnl=new Integer(fieldName.length());
 					if(lfieldsMap.containsKey(fnl)){
 						lfieldsMap.get(fnl).add(fields[i]);
@@ -227,12 +233,12 @@ public abstract class MapBean {
 							sb.append("}else if(\"").append(field.getName()).append("\".equals(attrName)){");
 						}
 						sb.append("this.").append(field.getName());
-						sb.append("=(").append(field.getType().getSimpleName()).append(")attrValue;");
+						sb.append("=(").append(classTypeName(field.getType())).append(")attrValue;");
 					}
 					sb.append("}break;");
 				}else{
 					sb.append("this.").append(ls.get(0).getName());
-					sb.append("=(").append(ls.get(0).getType().getSimpleName()).append(")attrValue;");
+					sb.append("=(").append(classTypeName(ls.get(0).getType())).append(")attrValue;");
 					sb.append("break;");
 				}
 			}
@@ -265,16 +271,23 @@ public abstract class MapBean {
 			.append("public void put(String attr,Object value){}");
 		}
 	}
+	protected static String classTypeName(Class<?>clazz){
+		return clazz.isArray()?clazz.getSimpleName():clazz.getName();
+	}
 	public static void main(String[] args) {
 		Map<String, Object>om=new HashMap<>();
 		om.put("age", 123);
 		om.put("name", "Jack");
 		om.put("size", 1234l);
 		om.put("emails", null);
+		om.put("date", new Date());
+		om.put("address", "Bei".getBytes(Charset.forName("utf-8")));
 		MapBean mb=createMapBeanByMap(om);
 		System.out.println(mb.get("age"));
 		System.out.println(mb.get("name"));
 		System.out.println(mb.get("size"));
 		System.out.println(mb.get("emails"));
+		System.out.println(mb.get("date"));
+		System.out.println(mb.get("address"));
 	}
 }
