@@ -39,7 +39,7 @@ public class CCTEAutoConfiguration {
 	@ConditionalOnProperty(name = "spring.ccte.enabled", matchIfMissing = true)
 	public CCTEViewResolver ccteViewResolver(){
 		CCTEViewResolver resolver=new CCTEViewResolver();
-		this.properties.applyToViewResolver(resolver);
+		this.properties.applyToMvcViewResolver(resolver);
 		return resolver;
 	}
 	

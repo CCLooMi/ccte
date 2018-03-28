@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-  <info organisation="ccloomi.com" module="ccte" revision="1.0.1" status="integration" default="true" publication="20170608130705"/>
+  <info organisation="ccloomi.com" module="ccte" revision="1.0.1" status="integration" default="true" publication="20180328215845"/>
   <configurations>
     <conf name="apiElements" visibility="private" extends="compile,runtime"/>
     <conf name="archives" visibility="public"/>
@@ -31,7 +31,7 @@
     <dependency org="ch.qos.logback" name="logback-classic" rev="1.1.9" conf="compile-&gt;default"/>
     <dependency org="ch.qos.logback" name="logback-core" rev="1.1.9" conf="compile-&gt;default"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="1.7.22" conf="compile-&gt;default"/>
-    <dependency org="org.springframework.boot" name="spring-boot-starter-web" rev="2.0.0.BUILD-SNAPSHOT" conf="compile-&gt;default"/>
+    <dependency org="org.springframework.boot" name="spring-boot-starter-web" rev="2.0.0.RELEASE" conf="compile-&gt;default"/>
     <dependency org="org.apache.tomcat.embed" name="tomcat-embed-logging-juli" rev="8.5.2" conf="compile-&gt;default"/>
     <dependency org="org.springframework" name="spring-core" rev="4.3.6.RELEASE" conf="compile-&gt;default"/>
     <dependency org="org.springframework" name="spring-web" rev="4.3.6.RELEASE" conf="compile-&gt;default"/>

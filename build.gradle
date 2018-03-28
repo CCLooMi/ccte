@@ -6,9 +6,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 allprojects {
 	repositories {
-		maven{url='http://192.168.31.109:8081/repository/alimaven-central/'}
-		maven{url="http://192.168.31.109:8081/repository/spring-snapshot/"}
-		maven{url="https://repo.spring.io/libs-snapshot"}
+		maven{url='http://localhost:8081/repository/alimaven-central/'}
+		maven{url="http://localhost:8081/repository/maven-releases/"}
 	}
 }
 //打包源代码
@@ -19,11 +18,11 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
     archives sourcesJar
 }
-//上传到nexus
+//上传到nexus,在终端中gradle uploadArchives即可
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "http://192.168.31.109:8081/repository/maven-releases/") {
+            repository(url: "http://localhost:8081/repository/maven-releases/") {
                 authentication(userName: "admin", password: "admin123")
             }
             pom.version = "$project.version"
@@ -37,7 +36,7 @@ dependencies {
         def jacksonVersion		= "2.8.6"
 		def logbackVersion		= "1.1.9"
 		def slf4jVersion		= "1.7.22"
-		def springBootVersion	= "2.0.0.BUILD-SNAPSHOT"
+		def springBootVersion	= "2.0.0.RELEASE"
 		
         compile (
         		["com.google.guava:guava:21.0"],

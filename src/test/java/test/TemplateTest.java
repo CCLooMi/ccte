@@ -19,7 +19,7 @@ public class TemplateTest {
 	public static void main(String[] args) throws Exception {
 		CCTETemplateFactory fac=new CCTETemplateFactory();
 		fac.applyProperties(new Properties());
-		CCTETemplate template=fac.getTemplate("templates/test.html");
+		CCTETemplate template=fac.getTestTemplate("templates/test.html");
 		Map<String, Object>model=new HashMap<>();
 		model.put("name", "Seemie的博客-Seemie的个人博客-CCLooMi");
 		model.put("names", new String[]{"Seemie","Tommy","Google","Apple"});
