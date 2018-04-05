@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix="spring.ccte")
 public class CCTEProperties extends AbstractTemplateViewResolverProperties{
-	public static final String DEFAULT_TEMPLATE_LOADER_PATH = "classpath:/templates";
+	public static final String DEFAULT_TEMPLATE_LOADER_PATH = "templates";
 
 	public static final String DEFAULT_PREFIX = "";
 

@@ -1,7 +1,15 @@
 package ccte.core;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,9 +24,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import ccte.core.compiler.CCTECompiler;
 import ccte.core.compiler.CCTECompilerResult;
@@ -33,10 +38,8 @@ import ccte.core.compiler.CCTEParser;
 public final class CCTETemplateFactory implements CCTEConstant{
 	private static final Logger log=LoggerFactory.getLogger(CCTETemplateFactory.class);
 	private static Map<String, CCTETemplate>templatesMap=new HashMap<>();
-	private final ResourcePatternResolver resourcePatternResolver;
-	
-	private String RESOURCE_PATTERN;
 	private Charset charset;
+	private String suffix;
 	private CCTEParser parser;
 	private String[] templateLoadPath;
 	private Map<String, CCTEDocument>cctedocMap;
@@ -44,7 +47,6 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	private Map<String, Set<String>>docImports;
 	private Map<String, Set<String>>docSets;
 	public CCTETemplateFactory(){
-		resourcePatternResolver=new PathMatchingResourcePatternResolver();
 		cctedocMap=new HashMap<>();
 		docMap=new HashMap<>();
 		docImports=new HashMap<>();
@@ -54,15 +56,18 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		int pathsl=templateLoadPath.length;
 		try{
 			for(int i=0;i<pathsl;i++){
-				String pattern=templateLoadPath[i].replace('.', '/')+RESOURCE_PATTERN;
-				Resource[]resources=resourcePatternResolver.getResources(pattern);
-				int rcl=resources.length;
-				for(int ri=0;ri<rcl;ri++){
-					if(resources[ri].isReadable()){
-						cctedocMap.put(resources[ri].getFilename(),
-								new CCTEDocument(resources[ri].getInputStream(),charset,resources[ri].getURL().getPath()));
+				Path p=Paths.get(System.getProperty("user.dir"),templateLoadPath[i]);
+				Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
+					@Override
+					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+						File f=file.toFile();
+						if(f.getName().endsWith(suffix)) {
+							cctedocMap.put(f.getName(),
+									new CCTEDocument(new FileInputStream(f),charset,f.getAbsolutePath()));
+						}
+						return FileVisitResult.CONTINUE;
 					}
-				}
+				});
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -131,7 +136,8 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		StringBuilder fileHead=new StringBuilder();
 		for(Entry<String, Document>entry:docMap.entrySet()){
 			fileHead.delete(0, fileHead.length());
-			fileHead.append("import java.util.*;")
+			fileHead
+			.append("import java.util.*;")
 			.append("import java.io.*;")
 			.append("import java.math.*;")
 			.append("import ").append(MapBean.class.getName()).append(';');
@@ -143,7 +149,7 @@ public final class CCTETemplateFactory implements CCTEConstant{
 				fileHead.append("import ").append(imp.trim()).append(';');
 			}
 			Set<String>sets=docSets.get(entry.getKey());
-			String newClassName="CCTETemplate_"+Integer.toHexString(entry.getKey().hashCode());
+			String newClassName="CT"+Integer.toHexString(entry.getKey().hashCode()).toUpperCase();
 			classDocMap.put(newClassName, entry.getKey());
 			fileHead.append("public class ")
 			.append(newClassName)
@@ -185,10 +191,14 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	/**测试初始化*/
 	public void testInit(String url){
 		if(!templatesMap.containsKey(url)){
-			InputStream in=getClass().getClassLoader().getResourceAsStream(url);
-			CCTEDocument doc=new CCTEDocument(in, charset,url);
-			cctedocMap.put(url, doc);
-			pretreatment().compile();
+			File f=new File(System.getProperty("user.dir"), url);
+			try {
+				CCTEDocument doc=new CCTEDocument(new FileInputStream(f), charset,url);
+				cctedocMap.put(url, doc);
+				pretreatment().compile();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	/**测试用*/
@@ -203,10 +213,10 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	 * @param properties
 	 */
 	public CCTETemplateFactory applyProperties(Properties properties) {
-		this.templateLoadPath=properties.getProperty("templateLoadPath", "classpath:/templates/").split(",|;");
+		this.templateLoadPath=properties.getProperty("templateLoadPath", "templates").split(",|;");
 		this.charset=Charset.forName(properties.getProperty("charset", "UTF-8"));
 		this.parser=new CCTEParser(charset);
-		this.RESOURCE_PATTERN="/**/*"+properties.getProperty("suffix", ".html");
+		this.suffix=properties.getProperty("suffix", ".html");
 		return this;
 	}
 
