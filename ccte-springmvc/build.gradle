@@ -1,0 +1,56 @@
+group "com.ccloomi"
+version '2.1.0'
+def artifactId='ccte-springmvc'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+def mvnLocal  ='http://localhost:8081/repository/maven-central/'
+def mvnRelease='http://localhost:8081/repository/maven-releases/'
+allprojects {
+    repositories {
+        //maven{url='https://maven.aliyun.com/nexus/content/groups/public/'}
+        maven{url="$mvnLocal"}
+        maven{url="$mvnRelease"}
+        //mavenCentral()
+    }
+}
+dependencies {
+        def jacksonVersion      = "2.9.8"
+        def logbackVersion      = "1.2.3"
+        def slf4jVersion        = "1.7.26"
+        def springVersion       = "5.2.4.RELEASE"
+    compile (
+		project(":ccte-core"),
+		"ch.qos.logback:logback-access:$logbackVersion",
+		"ch.qos.logback:logback-classic:$logbackVersion",
+		"ch.qos.logback:logback-core:$logbackVersion",
+		"org.slf4j:slf4j-api:$slf4jVersion",
+		"org.springframework:spring-webmvc:$springVersion",
+		"javax.servlet:javax.servlet-api:3.1.0",
+		"javax.servlet.jsp:javax.servlet.jsp-api:2.3.1",
+    fileTree(dir: 'libs', include: '*.jar'))
+    testCompile("junit:junit:4.+","org.mockito:mockito-core:2.24.5")
+}
+//打包源代码
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives sourcesJar
+}
+tasks.withType(JavaCompile) {  
+    options.encoding = "UTF-8"  
+}
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "$mvnRelease") {
+                authentication(userName: "admin", password: "admin123")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "$project.group"
+        }
+    }
+}
