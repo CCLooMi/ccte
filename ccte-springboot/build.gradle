@@ -1,5 +1,3 @@
-group "com.ccloomi"
-version '2.1.0'
 def artifactId='ccte-springboot'
 apply plugin: 'java'
 apply plugin: 'maven'

@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.JarEntry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -30,6 +31,8 @@ import com.ccte.core.compiler.CCTECompiler;
 import com.ccte.core.compiler.CCTECompilerResult;
 import com.ccte.core.compiler.CCTEParser;
 import com.ccte.core.util.ResourceResolveUtil;
+import com.ccte.core.util.ResourceResolveUtil.FileFilter;
+import com.ccte.core.util.ResourceResolveUtil.JarEntryFilter;
 
 /**@类名 CCTETemplateFactory
  * @说明 
@@ -56,43 +59,59 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		docSets=new HashMap<>();
 	}
 	private CCTETemplateFactory scanTemplates(){
-		ResourceResolveUtil.resolveAllFile(je->{
-			if(classTemplateLoadPath!=null) {
-				String name=je.getName();
-				if(name.charAt(name.length()-1)!='/') {
-					for(int i=0;i<classTemplateLoadPath.length;i++) {
-						if(name.startsWith(classTemplateLoadPath[i])&&name.endsWith(suffix)) {
-							int idx=name.lastIndexOf('/');
-							cctedocMap.put(name.substring(idx<0?0:idx),
-									new CCTEDocument(ClassLoader.getSystemResourceAsStream(name), charset, name));
-						}
-					}
-				}
-			}
-		}, file->{
-			if(fileTemplateLoadPath!=null) {
-				for(int i=0;i<fileTemplateLoadPath.length;i++) {
-					file=file.resolve(fileTemplateLoadPath[i]);
-					if(file.toFile().exists()) {
-						try {
-							Files.walkFileTree(file, new SimpleFileVisitor<Path>() {
-								@Override
-								public FileVisitResult visitFile(Path pf, BasicFileAttributes attrs) throws IOException {
-									File f=pf.toFile();
-									if(f.getName().endsWith(suffix)) {
-										cctedocMap.put(f.getName(),
-												new CCTEDocument(new FileInputStream(f),charset,f.getAbsolutePath()));
-									}
-									return FileVisitResult.CONTINUE;
+		JarEntryFilter je=null;
+		FileFilter ff=null;
+		
+		if(classTemplateLoadPath!=null) {
+			je=new JarEntryFilter() {
+				@Override
+				public void filter(JarEntry je) {
+					if(classTemplateLoadPath!=null) {
+						String name=je.getName();
+						if(name.charAt(name.length()-1)!='/') {
+							for(int i=0;i<classTemplateLoadPath.length;i++) {
+								if(name.startsWith(classTemplateLoadPath[i])&&name.endsWith(suffix)) {
+									int idx=name.lastIndexOf('/');
+									cctedocMap.put(name.substring(idx<0?0:idx),
+											new CCTEDocument(ClassLoader.getSystemResourceAsStream(name), charset, name));
 								}
-							});
-						} catch (IOException e) {
-							e.printStackTrace();
+							}
 						}
 					}
 				}
-			}
-		},false);
+			};
+		}
+		if(fileTemplateLoadPath!=null) {
+			ff=new FileFilter() {
+				@Override
+				public void filter(Path file) {
+					for(int i=0;i<fileTemplateLoadPath.length;i++) {
+						file=file.resolve(fileTemplateLoadPath[i]);
+						if(file.toFile().exists()) {
+							try {
+								Files.walkFileTree(file, new SimpleFileVisitor<Path>() {
+									@Override
+									public FileVisitResult visitFile(Path pf, BasicFileAttributes attrs) throws IOException {
+										File f=pf.toFile();
+										if(f.getName().endsWith(suffix)) {
+											cctedocMap.put(f.getName(),
+													new CCTEDocument(new FileInputStream(f),charset,f.getAbsolutePath()));
+										}
+										return FileVisitResult.CONTINUE;
+									}
+								});
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			};
+		}
+		
+		if(je!=null||ff!=null) {
+			ResourceResolveUtil.resolveAllFile(je,ff,false);
+		}
 		return this;
 	}
 	private CCTETemplateFactory pretreatment(){
@@ -150,6 +169,9 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	 * @return
 	 */
 	private CCTETemplateFactory compile(){
+		if(docMap.isEmpty()) {
+			return this;
+		}
 		ICompilationUnit[]compilationUnits=new ICompilationUnit[docMap.size()];
 		//新生成的class名称和对应的文档key的映射map
 		Map<String, String>classDocMap=new HashMap<>();
@@ -222,6 +244,7 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		for(String p:ps) {
 			if(p.startsWith("classpath*:")) {
 				cps.add(p.substring(11, p.length()));
+				fps.add(cps.get(cps.size()-1));
 			}else {
 				fps.add(p);
 			}
