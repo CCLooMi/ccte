@@ -26,7 +26,9 @@ public class ResourceResolveUtil {
 	 * @param walkDirectory 是否遍历文件夹
 	 */
 	public static void resolveAllFile(JarEntryFilter jeFilter,FileFilter fileFilter,boolean walkDirectory) {
-		splitByChar(System.getProperty("java.class.path"), ';', path->{
+		//不同的系统分隔符不一样
+		char separator=System.getProperty("path.separator").charAt(0);
+		splitByChar(System.getProperty("java.class.path"), separator, path->{
 			File file=new File(path);
 			if(file.isFile()) {
 				if(jeFilter!=null) {

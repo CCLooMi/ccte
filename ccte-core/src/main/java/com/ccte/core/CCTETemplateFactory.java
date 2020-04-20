@@ -66,15 +66,13 @@ public final class CCTETemplateFactory implements CCTEConstant{
 			je=new JarEntryFilter() {
 				@Override
 				public void filter(JarEntry je) {
-					if(classTemplateLoadPath!=null) {
-						String name=je.getName();
-						if(name.charAt(name.length()-1)!='/') {
-							for(int i=0;i<classTemplateLoadPath.length;i++) {
-								if(name.startsWith(classTemplateLoadPath[i])&&name.endsWith(suffix)) {
-									int idx=name.lastIndexOf('/');
-									cctedocMap.put(name.substring(idx<0?0:idx),
-											new CCTEDocument(ClassLoader.getSystemResourceAsStream(name), charset, name));
-								}
+					String name=je.getName();
+					if(name.charAt(name.length()-1)!='/') {
+						for(int i=0;i<classTemplateLoadPath.length;i++) {
+							if(name.startsWith(classTemplateLoadPath[i])&&name.endsWith(suffix)) {
+								int idx=name.lastIndexOf('/');
+								cctedocMap.put(name.substring(idx<0?0:idx),
+										new CCTEDocument(ClassLoader.getSystemResourceAsStream(name), charset, name));
 							}
 						}
 					}

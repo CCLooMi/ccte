@@ -7,7 +7,7 @@ def mvnLocal  ='http://localhost:8081/repository/maven-central/'
 def mvnRelease='http://localhost:8081/repository/maven-releases/'
 allprojects {
 	group "com.ccloomi"
-	version '2.1.1'
+	version '2.1.2'
 	repositories {
 		//maven{url='https://maven.aliyun.com/nexus/content/groups/public/'}
 		maven{url="$mvnLocal"}
