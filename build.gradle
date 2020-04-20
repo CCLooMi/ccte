@@ -16,7 +16,13 @@ allprojects {
 		mavenCentral()
 	}
 }
-
+dependencies {
+	compile (
+		project(":ccte-core"),
+		project(":ccte-springmvc"),
+		project(":ccte-springboot")
+		)
+}
 //打包源代码
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = 'sources'
