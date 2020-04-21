@@ -219,7 +219,7 @@ public final class CCTETemplateFactory implements CCTEConstant{
 			@Override
 			public void result(String name, CCTETemplate instance) {
 				templatesMap.put(classDocMap.get(name), instance.setCharset(charset));
-				log.info("mapping [{}] to [{}]",classDocMap.get(name), name);
+				log.info("mapping [{}] as [{}]", name, classDocMap.get(name));
 			}
 		});
 		return this;
