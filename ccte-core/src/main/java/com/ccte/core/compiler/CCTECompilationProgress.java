@@ -33,7 +33,7 @@ public class CCTECompilationProgress extends CompilationProgress{
 
 	@Override
 	public void worked(int workIncrement, int remainingWork) {
-		log.info("已完成:[{}]\t剩余:[{}]",workIncrement,remainingWork);
+		log.info("Complete/Remaining [{}/{}]",workIncrement,remainingWork);
 	}
 
 }

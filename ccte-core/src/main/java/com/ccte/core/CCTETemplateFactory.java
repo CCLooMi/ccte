@@ -33,6 +33,7 @@ import com.ccte.core.compiler.CCTEParser;
 import com.ccte.core.util.ResourceResolveUtil;
 import com.ccte.core.util.ResourceResolveUtil.FileFilter;
 import com.ccte.core.util.ResourceResolveUtil.JarEntryFilter;
+import com.ccte.core.util.digest.DigestUtils;
 
 /**@类名 CCTETemplateFactory
  * @说明 
@@ -189,7 +190,8 @@ public final class CCTETemplateFactory implements CCTEConstant{
 				fileHead.append("import ").append(imp.trim()).append(';');
 			}
 			Set<String>sets=docSets.get(entry.getKey());
-			String newClassName="CT"+Integer.toHexString(entry.getKey().hashCode()).toUpperCase();
+			String newClassName="CCTE"+DigestUtils.MD5HEX(entry.getKey());
+			
 			classDocMap.put(newClassName, entry.getKey());
 			fileHead.append("public class ")
 			.append(newClassName)
@@ -217,7 +219,7 @@ public final class CCTETemplateFactory implements CCTEConstant{
 			@Override
 			public void result(String name, CCTETemplate instance) {
 				templatesMap.put(classDocMap.get(name), instance.setCharset(charset));
-				log.info("注册{}到{}", name,classDocMap.get(name));
+				log.info("mapping [{}] to [{}]",classDocMap.get(name), name);
 			}
 		});
 		return this;
