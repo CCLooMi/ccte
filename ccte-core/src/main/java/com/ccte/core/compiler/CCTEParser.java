@@ -21,6 +21,7 @@ import org.jsoup.nodes.Node;
 import com.ccte.core.CCTEConstant;
 import com.ccte.core.CCTEDocument;
 import com.ccte.core.CCTETemplate;
+import com.ccte.core.util.digest.DigestUtils;
 
 /**© 2015-2017 Chenxj Copyright
  * 类    名：CCTEParser
@@ -47,14 +48,14 @@ public class CCTEParser implements CCTEConstant{
 			if(!codes[i].isEmpty()){
 				byte[]bs=codes[i].getBytes(charset);
 				if(bs[0]!=codeflag){
-					int k=codes[i].hashCode();
+					String k=DigestUtils.MD5Hex(bs);
 					CCTETemplate.resources.put(k, bs);
 					addField(fieldNames,fileHead,k);
-					sb.append("out.write(_").append(Integer.toHexString(k)).append(");");
+					sb.append("out.write(_").append(k).append(");");
 					//TODO 用来查看是否有将java代码将html代码输出的情况
 //					System.out.println("htmlCodes[i]\t"+codes[i]);
 				}else{
-					sb.append(codes[i].substring(1, codes[i].length()));
+					sb.append(codes[i].substring(1));
 				}
 			}
 		}
@@ -424,12 +425,12 @@ public class CCTEParser implements CCTEConstant{
 	private String toGetAttr(String s){
 		return s.replaceAll("\\.", ".get(\"")+"\")";
 	}
-	private void addField(Set<String>fieldNames,StringBuilder fileHead,int k){
-		String fieldName="_"+Integer.toHexString(k);
+	private void addField(Set<String>fieldNames,StringBuilder fileHead,String k){
+		String fieldName="_"+k;
 		if(!fieldNames.contains(fieldName)){
 			fileHead.append("private static final byte[] ")
 			.append(fieldName)
-			.append("=getResource(").append(k).append(");");
+			.append("=getResource(\"").append(k).append("\");");
 			fieldNames.add(fieldName);
 		}
 	}

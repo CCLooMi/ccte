@@ -14,10 +14,10 @@ import java.util.Set;
  * @日期 2017年4月1日-上午10:44:28
  */
 public abstract class CCTETemplate {
-	public static final Map<Integer, byte[]>resources=new HashMap<>();
+	public static final Map<String, byte[]>resources=new HashMap<>();
 	private Charset charset;
 	public abstract void render(Map<String, Object>model,OutputStream out) throws Exception;
-	protected static byte[] getResource(int k){
+	protected static byte[] getResource(Object k){
 		return resources.get(k);
 	}
 	protected void outprint(OutputStream out,Object value) throws Exception{
