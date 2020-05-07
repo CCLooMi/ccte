@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.jdt.internal.compiler.batch.CompilationUnit;
+import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -213,7 +214,7 @@ public final class CCTETemplateFactory implements CCTEConstant{
 //			System.out.println(fileHead);
 			char[]content=new char[fileHead.length()];
 			fileHead.getChars(0, fileHead.length(), content, 0);
-			compilationUnits[docId++]=new CompilationUnit(content, newClassName, charset.name(), "none", true);
+			compilationUnits[docId++]=new CompilationUnit(content, newClassName, charset.name(), Main.NONE, true, null);
 		}
 		CCTECompiler.compile(compilationUnits,new CCTECompilerResult<CCTETemplate>() {
 			@Override

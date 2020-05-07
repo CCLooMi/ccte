@@ -21,6 +21,7 @@ import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies;
 import org.eclipse.jdt.internal.compiler.IErrorHandlingPolicy;
 import org.eclipse.jdt.internal.compiler.IProblemFactory;
 import org.eclipse.jdt.internal.compiler.batch.CompilationUnit;
+import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
 import org.eclipse.jdt.internal.compiler.env.INameEnvironment;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
@@ -101,10 +102,10 @@ public class CCTECompiler {
 	public static <T>void compile(StringBuilder source,String className,CCTECompilerResult<T> compilerResult){
 		char[]content=new char[source.length()];
 		source.getChars(0, source.length(), content, 0);
-		compile(new ICompilationUnit[]{new CompilationUnit(content, className, charset, "none", true)},compilerResult);
+		compile(new ICompilationUnit[]{new CompilationUnit(content, className, charset, Main.NONE, true,null)},compilerResult);
 	}
 	public static <T>void compile(String source,String className,CCTECompilerResult<T> compilerResult){
-		compile(new ICompilationUnit[]{new CompilationUnit(source.toCharArray(), className, charset, "none", true)},compilerResult);
+		compile(new ICompilationUnit[]{new CompilationUnit(source.toCharArray(), className, charset, Main.NONE, true, null)},compilerResult);
 	}
 	public static class CCTEClassLoad extends ClassLoader{
 		private Method defineClass;
