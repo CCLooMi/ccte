@@ -3,11 +3,15 @@ def artifactId='ccte-all'
 apply plugin: 'java'
 apply plugin: 'maven'
 
-def mvnLocal  ='http://localhost:8081/repository/maven-central/'
-def mvnRelease='http://localhost:8081/repository/maven-releases/'
+ext {
+	mvnLocal = 'http://localhost:8081/repository/maven-central/'
+	mvnRelease = 'http://localhost:8081/repository/maven-releases/'
+	userName = 'admin'
+	password = 'admin123'
+}
 allprojects {
 	group "com.ccloomi"
-	version '2.1.7'
+	version '2.2.0'
 	repositories {
 		//maven{url='https://maven.aliyun.com/nexus/content/groups/public/'}
 		maven{url="$mvnLocal"}

@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ConditionalOnEnabledResourceChain;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
@@ -29,10 +30,10 @@ public class CCTEAutoConfiguration {
 	
 	@Bean
 	@ConditionalOnMissingBean(CCTETemplateFactory.class)
-	public CCTETemplateFactory ccteTemplateFactory(){
+	public CCTETemplateFactory ccteTemplateFactory(ApplicationContext ctx){
 		CCTETemplateFactory factory=new CCTETemplateFactory()
 				.applyProperties(this.properties.toProperties())
-				.compileTemplates();
+				.compileTemplates(ctx.getClassLoader());
 		return factory;
 	}
 	@Bean

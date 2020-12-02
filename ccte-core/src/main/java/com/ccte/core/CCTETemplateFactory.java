@@ -52,18 +52,22 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	private String[] fileTemplateLoadPath;
 	private Map<String, CCTEDocument>cctedocMap;
 	private Map<String, Document>docMap;
+	private Map<String, String>docVersionMap;
 	private Map<String, Set<String>>docImports;
 	private Map<String, Set<String>>docSets;
 	public CCTETemplateFactory(){
 		cctedocMap=new HashMap<>();
 		docMap=new HashMap<>();
+		docVersionMap=new HashMap<>();
 		docImports=new HashMap<>();
 		docSets=new HashMap<>();
 	}
 	private CCTETemplateFactory scanTemplates(){
 		JarEntryFilter je=null;
 		FileFilter ff=null;
-		
+		if(!cctedocMap.isEmpty()) {
+			cctedocMap.clear();
+		}
 		if(classTemplateLoadPath!=null) {
 			je=new JarEntryFilter() {
 				@Override
@@ -118,6 +122,9 @@ public final class CCTETemplateFactory implements CCTEConstant{
 		for(CCTEDocument cctedoc:cctedocMap.values()){
 			cctedoc.repareRef(cctedocMap);
 		}
+		if(!docMap.isEmpty()) {
+			docMap.clear();
+		}
 		for(Entry<String, CCTEDocument>entry:cctedocMap.entrySet()){
 			if(!entry.getValue().isSnippet()){
 				Document doc=Jsoup.parse(entry.getValue().toString());
@@ -157,7 +164,6 @@ public final class CCTETemplateFactory implements CCTEConstant{
 			}
 		}
 		cctedocMap.clear();
-		cctedocMap=null;
 		return this;
 	}
 	/**
@@ -168,14 +174,14 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	 * @日期 2017年4月7日-下午4:01:24
 	 * @return
 	 */
-	private CCTETemplateFactory compile(){
+	private CCTETemplateFactory compile(ClassLoader cl){
 		if(docMap.isEmpty()) {
 			return this;
 		}
-		ICompilationUnit[]compilationUnits=new ICompilationUnit[docMap.size()];
+		List<ICompilationUnit>compilationUnits=new ArrayList<>(docMap.size());
+		
 		//新生成的class名称和对应的文档key的映射map
 		Map<String, String>classDocMap=new HashMap<>();
-		int docId=0;
 		StringBuilder fileHead=new StringBuilder();
 		for(Entry<String, Document>entry:docMap.entrySet()){
 			fileHead.delete(0, fileHead.length());
@@ -210,19 +216,35 @@ public final class CCTETemplateFactory implements CCTEConstant{
 			java.insert(0, java_before).append("}}");
 			
 			fileHead.append(java);
+			
+			String docNewVersion=DigestUtils.MD5Hex(entry.getValue().outerHtml());
+			if(!docNewVersion.equals(docVersionMap.get(entry.getKey()))) {
+				docVersionMap.put(entry.getKey(), docNewVersion);
+			}else {
+				continue;
+			}
 			//TODO
 //			System.out.println(fileHead);
 			char[]content=new char[fileHead.length()];
 			fileHead.getChars(0, fileHead.length(), content, 0);
-			compilationUnits[docId++]=new CompilationUnit(content, newClassName, charset.name(), Main.NONE, true, null);
+			compilationUnits.add(new CompilationUnit(content, newClassName, charset.name(), Main.NONE, true, null));
 		}
-		CCTECompiler.compile(compilationUnits,new CCTECompilerResult<CCTETemplate>() {
-			@Override
-			public void result(String name, CCTETemplate instance) {
-				templatesMap.put(classDocMap.get(name), instance.setCharset(charset));
-				log.info("mapping [{}] as [{}]", name, classDocMap.get(name));
-			}
-		});
+		if(!compilationUnits.isEmpty()) {
+			ICompilationUnit[]cpUnits=new ICompilationUnit[compilationUnits.size()];
+			compilationUnits.toArray(cpUnits);
+			CCTECompiler.compile(cpUnits,new CCTECompilerResult<CCTETemplate>() {
+				@Override
+				public void result(String name, CCTETemplate instance) {
+					templatesMap.put(classDocMap.get(name), instance.setCharset(charset));
+					log.info("mapping [{}] as [{}]", name, classDocMap.get(name));
+				}
+			},cl);
+		}
+		docMap.keySet().removeAll(docVersionMap.keySet());
+		if(!docMap.isEmpty()) {
+			templatesMap.keySet().removeAll(docMap.keySet());
+			docMap.clear();
+		}
 		return this;
 	}
 	public boolean checkTemplate(String url){
@@ -270,10 +292,21 @@ public final class CCTETemplateFactory implements CCTEConstant{
 	 * @邮箱 chenios@foxmail.com
 	 * @日期 2017年4月7日-下午3:58:55
 	 */
-	public CCTETemplateFactory compileTemplates() {
-		return scanTemplates()
-		.pretreatment()
-		.compile();
+	public CCTETemplateFactory compileTemplates(ClassLoader cl) {
+		try {
+			return scanTemplates().pretreatment().compile(cl);
+		}finally {
+			new Thread(()->{
+				while(true) {
+					scanTemplates().pretreatment().compile(cl);
+					try {
+						Thread.sleep(60000);
+					} catch (InterruptedException e) {
+						break;
+					}
+				}
+			}).start();
+		}
 	}
 	/**获取 charset
 	 * 可用于response设置返回编码*/

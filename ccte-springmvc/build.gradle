@@ -2,21 +2,11 @@ def artifactId='ccte-springmvc'
 apply plugin: 'java'
 apply plugin: 'maven'
 
-def mvnLocal  ='http://localhost:8081/repository/maven-central/'
-def mvnRelease='http://localhost:8081/repository/maven-releases/'
-allprojects {
-    repositories {
-        //maven{url='https://maven.aliyun.com/nexus/content/groups/public/'}
-        maven{url="$mvnLocal"}
-        maven{url="$mvnRelease"}
-        //mavenCentral()
-    }
-}
 dependencies {
         def jacksonVersion      = "2.9.8"
         def logbackVersion      = "1.2.3"
         def slf4jVersion        = "1.7.26"
-        def springVersion       = "5.2.4.RELEASE"
+        def springVersion       = "5.3.1"
     compile (
 		project(":ccte-core"),
 		"ch.qos.logback:logback-access:$logbackVersion",

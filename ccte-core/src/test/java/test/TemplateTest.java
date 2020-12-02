@@ -21,16 +21,26 @@ public class TemplateTest {
 		Properties properties=new Properties();
 		properties.put("templateLoadPath", "classpath*:templates,templates");
 		fac.applyProperties(properties);
-		fac.compileTemplates();
+		fac.compileTemplates(Thread.currentThread()
+				.getContextClassLoader());
 		
-		String turl="test.html";
-		CCTETemplate template=fac.findTemplate(turl);
-		Map<String, Object>model=new HashMap<>();
-		model.put("name", "Seemie的博客-Seemie的个人博客-CCLooMi");
-		model.put("names", new String[]{"Seemie","Tommy","Google","Apple"});
-		Map<String, Object>copyright=new HashMap<>();
-		copyright.put("desc", " background-color:rgba(255,255,255,0.4); //透明度调整范围（0~1) //背景色颜色值必需是RGB值 a //表示透明度alpha  href表示http+reference display:flex align-");
-		model.put("copyright", copyright);
-		template.render(model, System.out);
+		new Thread(()->{
+			while(true) {
+				try {
+					String turl="test.html";
+					CCTETemplate template=fac.findTemplate(turl);
+					Map<String, Object>model=new HashMap<>();
+					model.put("name", "Seemie的博客-Seemie的个人博客-CCLooMi");
+					model.put("names", new String[]{"Seemie","Tommy","Google","Apple"});
+					Map<String, Object>copyright=new HashMap<>();
+					copyright.put("desc", " background-color:rgba(255,255,255,0.4); //透明度调整范围（0~1) //背景色颜色值必需是RGB值 a //表示透明度alpha  href表示http+reference display:flex align-");
+					model.put("copyright", copyright);
+					template.render(model, System.out);
+					Thread.sleep(5000);
+				} catch (Exception e) {
+					break;
+				}
+			}
+		}).start();
 	}
 }
